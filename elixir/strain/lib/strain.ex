@@ -7,11 +7,19 @@ defmodule Strain do
   """
   @spec keep(list :: list(any), fun :: (any -> boolean)) :: list(any)
   def keep(list, fun) do
-    do_keep(list, fun)
+    do_keep(list, fun, [])
   end
 
-  defp do_keep([], _) do
-    []
+  defp do_keep([], _, result) do
+    Enum.reverse(result)
+  end
+
+  defp do_keep([head | tail], fun, result) do
+    if fun.(head) do
+      do_keep(tail, fun, [head | result])
+    else
+      do_keep(tail, fun, result)
+    end
   end
 
   @doc """
