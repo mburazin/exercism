@@ -15,6 +15,18 @@ defmodule PigLatin do
   """
   @spec translate(phrase :: String.t()) :: String.t()
   def translate(phrase) do
+    vowels = for x <- 'aeiou', do: <<x>>
+
+    String.starts_with?(phrase, vowels)
+    |> do_translate(phrase)
+  end
+
+  defp do_translate(_starts_with_vowel = false, <<first::binary-1, rest::binary>>) do
+    rest <> first <> "ay"
+  end
+
+  defp do_translate(_starts_with_vowel = true, phrase) do
     phrase <> "ay"
   end
+
 end
