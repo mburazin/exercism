@@ -15,5 +15,6 @@ defmodule PigLatin do
   """
   @spec translate(phrase :: String.t()) :: String.t()
   def translate(phrase) do
+    phrase <> "ay"
   end
 end
