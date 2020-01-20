@@ -15,18 +15,32 @@ defmodule PigLatin do
   """
   @spec translate(phrase :: String.t()) :: String.t()
   def translate(phrase) do
+    do_translate(phrase, "")
+  end
+
+  defp do_translate(current = <<first::binary-1, rest::binary>>, consonants) do
+    cond do
+      starts_with_qu?(current) and consonants === "" ->
+        <<qu::binary-2, rest::binary>> = current
+        rest <> qu <> "ay"
+      starts_with_qu?(current) ->
+        <<qu::binary-2, rest::binary>> = current
+        rest <> consonants <> qu <> "ay"
+      starts_with_vowel?(first) and consonants === "" ->
+        current <> "ay"
+      starts_with_vowel?(first) ->
+        current <> consonants <> "ay"
+      true ->
+        do_translate(rest, consonants <> first)
+    end
+  end
+
+  defp starts_with_vowel?(string) do
     vowels = for x <- 'aeiou', do: <<x>>
-
-    String.starts_with?(phrase, vowels)
-    |> do_translate(phrase)
+    String.starts_with?(string, vowels)
   end
 
-  defp do_translate(_starts_with_vowel = false, <<first::binary-1, rest::binary>>) do
-    rest <> first <> "ay"
+  defp starts_with_qu?(<<qu::binary-2, _::binary>>) do
+    qu === "qu"
   end
-
-  defp do_translate(_starts_with_vowel = true, phrase) do
-    phrase <> "ay"
-  end
-
 end
