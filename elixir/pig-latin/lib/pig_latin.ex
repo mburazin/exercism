@@ -15,7 +15,10 @@ defmodule PigLatin do
   """
   @spec translate(phrase :: String.t()) :: String.t()
   def translate(phrase) do
-    do_translate(phrase, "")
+    words = String.split(phrase)
+    translated_words = for word <- words, do: do_translate(word, "")
+    List.foldr(translated_words, "", fn w, acc -> w <> " " <> acc end)
+    |> String.trim()
   end
 
   defp do_translate(current = <<first::binary-1, rest::binary>>, consonants) do
@@ -30,6 +33,8 @@ defmodule PigLatin do
         current <> "ay"
       starts_with_vowel?(first) ->
         current <> consonants <> "ay"
+      not starts_with_vowel?(first) and (consonants === "x" or consonants === "y") ->
+        consonants <> current <> "ay"
       true ->
         do_translate(rest, consonants <> first)
     end
